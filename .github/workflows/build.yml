@@ -1,0 +1,37 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout del codice
+      uses: actions/checkout@v4
+
+    - name: Configura Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Installa PyInstaller e dipendenze
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+        # Se il tuo script usa altre librerie, togli il simbolo # dalle righe sotto e aggiungile:
+        # pip install pandas
+        # pip install requests
+
+    - name: Compila in file EXE
+      run: |
+        pyinstaller --onefile grafico_frequenze_v4.py
+
+    - name: Carica il file EXE finale
+      uses: actions/upload-artifact@v4
+      with:
+        name: Eseguibile-Windows
+        path: dist/*.exe
